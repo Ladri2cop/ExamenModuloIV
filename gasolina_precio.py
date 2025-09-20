@@ -9,8 +9,6 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
-
-# --- Configuración de página ---
 st.set_page_config(
     page_title="Predicción Gasolina",
     page_icon="⛽",
@@ -20,13 +18,10 @@ st.set_page_config(
 st.title("Predicción del precio de gasolina en México")
 st.caption("Dataset: **gasolina_precios.csv** | Variables: estado, año, mes → precio")
 
-
-# --- Lectura de datos con cache ---
 try:
     use_cache = st.cache_data
 except AttributeError:
     use_cache = st.cache
-
 
 DATA_FILE = "gasolina_precios.csv"
 
@@ -53,21 +48,17 @@ def cargar_datos():
     if data is None:
         raise RuntimeError(f"No fue posible leer el archivo. Último error: {ultimo_error}")
 
-    # Conversión de tipos
     data["estado"] = data["estado"].astype(str)
     for col in ["año", "mes", "precio"]:
         data[col] = pd.to_numeric(data[col], errors="coerce")
 
     return data.dropna().reset_index(drop=True)
 
-
 df = cargar_datos()
 
 with st.expander("📊 Vista previa del dataset", expanded=False):
     st.dataframe(df.head(15))
 
-
-# --- Preparación de variables ---
 X = df[["estado", "año", "mes"]]
 y = df["precio"]
 
@@ -75,8 +66,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-
-# --- Modelo ---
 transformador = ColumnTransformer(
     [("estado_ohe", OneHotEncoder(handle_unknown="ignore"), ["estado"])],
     remainder="passthrough"
@@ -90,8 +79,6 @@ modelo = Pipeline([
 modelo.fit(X_train, y_train)
 y_pred = modelo.predict(X_test)
 
-
-# --- Métricas ---
 rmse = float(np.sqrt(mean_squared_error(y_test, y_pred)))
 r2 = r2_score(y_test, y_pred)
 
@@ -100,8 +87,6 @@ c1, c2 = st.columns(2)
 c1.metric("RMSE", f"{rmse:,.4f}")
 c2.metric("R²", f"{r2:,.4f}")
 
-
-# --- Predicción interactiva ---
 st.header("Probar una predicción")
 
 col1, col2 = st.columns(2)
@@ -112,9 +97,8 @@ with col1:
 with col2:
     anio_sel = st.number_input(
         "Año",
-        min_value=int(df["año"].min()),
-        max_value=int(df["año"].max()),
-        value=int(df["año"].max()),
+        min_value=int(df["año"].min()),   
+        value=int(df["año"].max()),       
         step=1
     )
 
