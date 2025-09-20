@@ -56,7 +56,7 @@ def cargar_datos():
 
 df = cargar_datos()
 
-with st.expander("📊 Vista previa del dataset", expanded=False):
+with st.expander("Vista previa del dataset", expanded=False):
     st.dataframe(df.head(15))
 
 X = df[["estado", "año", "mes"]]
@@ -82,7 +82,7 @@ y_pred = modelo.predict(X_test)
 rmse = float(np.sqrt(mean_squared_error(y_test, y_pred)))
 r2 = r2_score(y_test, y_pred)
 
-st.subheader("📈 Rendimiento del modelo")
+st.subheader("Rendimiento del modelo")
 c1, c2 = st.columns(2)
 c1.metric("RMSE", f"{rmse:,.4f}")
 c2.metric("R²", f"{r2:,.4f}")
